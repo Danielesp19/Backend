@@ -12,7 +12,8 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        $Service = Service::orderBy('name', 'asc')->get();
+        return response()->json(['data' => $Service], 200);
     }
 
     /**
@@ -20,7 +21,9 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $service = Service::create($request->all());
+        return response()->json(['data'=>$service],201);
     }
 
     /**
@@ -28,7 +31,7 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        //
+        return response()->json(['data' => $service], 200);
     }
 
     /**
@@ -36,7 +39,8 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
-        //
+        $service->update($request->all());
+        return response()->json(['data' => $service], 200);
     }
 
     /**
@@ -45,5 +49,8 @@ class ServiceController extends Controller
     public function destroy(Service $service)
     {
         //
+        $service->delete();
+         return response(null, 204);
+
     }
 }

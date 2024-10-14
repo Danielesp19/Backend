@@ -12,7 +12,8 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        //
+        $reservation = Reservation::orderBy('name', 'asc')->get();
+        return response()->json(['data' => $reservation], 200);
     }
 
     /**
@@ -20,7 +21,9 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $reservation = Reservation::create($request->all());
+        return response()->json(['data'=>$reservation],201);
     }
 
     /**
@@ -28,7 +31,7 @@ class ReservationController extends Controller
      */
     public function show(Reservation $reservation)
     {
-        //
+        return response()->json(['data' => $reservation], 200);
     }
 
     /**
@@ -36,7 +39,8 @@ class ReservationController extends Controller
      */
     public function update(Request $request, Reservation $reservation)
     {
-        //
+        $reservation->update($request->all());
+        return response()->json(['data' => $reservation], 200);
     }
 
     /**
@@ -45,5 +49,8 @@ class ReservationController extends Controller
     public function destroy(Reservation $reservation)
     {
         //
+        $reservation->delete();
+         return response(null, 204);
+
     }
 }

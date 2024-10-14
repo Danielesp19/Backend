@@ -14,7 +14,7 @@ return new class extends Migration
         /* This PHP code snippet is creating a migration in Laravel that defines a database table named
         `cabin_leves`. Here's a breakdown of what each line inside the `Schema::create` function is
         doing: */
-        Schema::create('cabin_leves', function (Blueprint $table) {
+        Schema::create('cabin_levels', function (Blueprint $table) {
             $table->id();
             $table->string('name', length: 50)->unique();
             $table->text('description')->nullable();

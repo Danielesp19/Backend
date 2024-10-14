@@ -12,7 +12,8 @@ class CabinServiceController extends Controller
      */
     public function index()
     {
-        //
+        $cabinService = CabinService::orderBy('name', 'asc')->get();
+        return response()->json(['data' => $cabinService], 200);
     }
 
     /**
@@ -20,7 +21,9 @@ class CabinServiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $cabinService = CabinService::create($request->all());
+        return response()->json(['data'=>$cabinService],201);
     }
 
     /**
@@ -28,7 +31,7 @@ class CabinServiceController extends Controller
      */
     public function show(CabinService $cabinService)
     {
-        //
+        return response()->json(['data' => $cabinService], 200);
     }
 
     /**
@@ -36,7 +39,8 @@ class CabinServiceController extends Controller
      */
     public function update(Request $request, CabinService $cabinService)
     {
-        //
+        $cabinService->update($request->all());
+        return response()->json(['data' => $cabinService], 200);
     }
 
     /**
@@ -45,5 +49,8 @@ class CabinServiceController extends Controller
     public function destroy(CabinService $cabinService)
     {
         //
+        $cabinService->delete();
+         return response(null, 204);
+
     }
 }

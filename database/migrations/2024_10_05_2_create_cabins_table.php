@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('cabinlevel_id');
             $table->timestamps();
 
-            $table->foreign('cabinlevel_id')->references('id')->on('cabinlevels')
+            $table->foreign('cabinlevel_id')->references('id')->on('cabin_levels')
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
         });

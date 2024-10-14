@@ -28,31 +28,31 @@ Route::prefix('cabin-levels')->group(function () {
 Route::prefix('cabin-services')->group(function () {
     Route::get('/', [CabinServiceController::class, 'index']);
     Route::post('/', [CabinServiceController::class, 'store']);
-    Route::get('/{cabin}', [CabinServiceController::class, 'show']);
-    Route::put('/{id}', [CabinServiceController::class, 'update']);
-    Route::delete('/', [CabinServiceController::class, 'destroy']);
+    Route::get('/{cabin-service}', [CabinServiceController::class, 'show']);
+    Route::put('/{cabin-service}', [CabinServiceController::class, 'update']);
+    Route::delete('/{cabin-service}', [CabinServiceController::class, 'destroy']);
 });
 
 Route::prefix('reservations')->group(function () {
     Route::get('/', [ReservationController::class, 'index']);
     Route::post('/', [ReservationController::class, 'store']);
-    Route::get('/{id}', [ReservationController::class, 'show']);
-    Route::put('/{id}', [ReservationController::class, 'update']);
-    Route::delete('/{id}', [ReservationController::class, 'destroy']);
+    Route::get('/{reservation}', [ReservationController::class, 'show']);
+    Route::put('/{reservation}', [ReservationController::class, 'update']);
+    Route::delete('/{reservation}', [ReservationController::class, 'destroy']);
 });
 
 Route::prefix('services')->group(function () {
     Route::get('/', [ServiceController::class, 'index']);
     Route::post('/', [ServiceController::class, 'store']);
-    Route::get('/{id}', [ServiceController::class, 'show']);
-    Route::put('/{id}', [ServiceController::class, 'update']);
-    Route::delete('/{id}', [ServiceController::class, 'destroy']);
+    Route::get('/{service}', [ServiceController::class, 'show']);
+    Route::put('/{service}', [ServiceController::class, 'update']);
+    Route::delete('/{service}', [ServiceController::class, 'destroy']);
 });
 
 Route::prefix('users')->group(function () {
     Route::get('/', [UserController::class, 'index']);
     Route::post('/', [UserController::class, 'store']);
-    Route::get('/{id}', [UserController::class, 'show']);
-    Route::put('/{id}', [UserController::class, 'update']);
-    Route::delete('/{id}', [UserController::class, 'destroy']);
+    Route::get('/{user}', [UserController::class, 'show']);
+    Route::put('/{user}', [UserController::class, 'update']);
+    Route::delete('/{user}', [UserController::class, 'destroy']);
 });

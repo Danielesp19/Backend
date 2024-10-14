@@ -12,9 +12,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        // Aquí usamos el modelo User, en lugar de una consulta SQL manual
-        $users = User::all();  // Eloquent se encarga de generar la consulta SQL
-        return response()->json($users);
+        $user = User::orderBy('name', 'asc')->get();
+        return response()->json(['data' => $user], 200);
     }
 
     /**
@@ -22,15 +21,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8'
-        ]);
-
-        // Creamos el nuevo usuario utilizando Eloquent, sin necesidad de una consulta SQL
-        $user = User::create($validated);
-        return response()->json($user, 201);
+        try{
+            $user = User::create($request->all());
+            return response()->json(['data'=>$user],201);
+        }
+        catch (\Exception $e) {
+        // Atrapar cualquier excepción y devolver un JSON con el error
+        return response()->json([
+            'error' => 'Error al crear la cabina',
+            'message' => $e->getMessage(), // Mensaje del error
+            'file' => $e->getFile(), // Archivo donde ocurrió
+            'line' => $e->getLine(), // Línea donde ocurrió
+        ], 500);
+        }
     }
 
     /**
@@ -38,7 +41,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return response()->json(['data' => $user], 200);
     }
 
     /**
@@ -46,7 +49,8 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $user->update($request->all());
+        return response()->json(['data' => $user], 200);
     }
 
     /**
@@ -55,5 +59,8 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+        $user->delete();
+         return response(null, 204);
+
     }
 }
