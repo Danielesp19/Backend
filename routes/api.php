@@ -12,25 +12,25 @@ use App\Http\Controllers\UserController;
 Route::prefix('cabins')->group(function () {
     Route::get('/', [CabinController::class, 'index']);
     Route::post('/', [CabinController::class, 'store']);
-    Route::get('/{id}', [CabinController::class, 'show']);
-    Route::put('/{id}', [CabinController::class, 'update']);
-    Route::delete('/{id}', [CabinController::class, 'destroy']);
+    Route::get('/{cabin}', [CabinController::class, 'show']);
+    Route::put('/{cabin}', [CabinController::class, 'update']);
+    Route::delete('/{cabin}', [CabinController::class, 'destroy']);
 });
 
 Route::prefix('cabin-levels')->group(function () {
     Route::get('/', [CabinLevelController::class, 'index']);
     Route::post('/', [CabinLevelController::class, 'store']);
-    Route::get('/{id}', [CabinLevelController::class, 'show']);
-    Route::put('/{id}', [CabinLevelController::class, 'update']);
-    Route::delete('/{id}', [CabinLevelController::class, 'destroy']);
+    Route::get('/{cabinLevel}', [CabinLevelController::class, 'show']);
+    Route::put('/{cabinLevel}', [CabinLevelController::class, 'update']);
+    Route::delete('/{cabinLevel}', [CabinLevelController::class, 'destroy']);
 });
 
 Route::prefix('cabin-services')->group(function () {
     Route::get('/', [CabinServiceController::class, 'index']);
     Route::post('/', [CabinServiceController::class, 'store']);
-    Route::get('/{id}', [CabinServiceController::class, 'show']);
+    Route::get('/{cabin}', [CabinServiceController::class, 'show']);
     Route::put('/{id}', [CabinServiceController::class, 'update']);
-    Route::delete('/{id}', [CabinServiceController::class, 'destroy']);
+    Route::delete('/', [CabinServiceController::class, 'destroy']);
 });
 
 Route::prefix('reservations')->group(function () {

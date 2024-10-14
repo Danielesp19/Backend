@@ -12,9 +12,8 @@ class CabinLevelController extends Controller
      */
     public function index()
     {
-        // Aquí usamos el modelo User, en lugar de una consulta SQL manual
-        $cabinLevel = CabinLevel::all();  // Eloquent se encarga de generar la consulta SQL
-        return response()->json($cabinLevel);
+        $cabinLevel = CabinLevel::orderBy('name', 'asc')->get();
+        return response()->json(['data' => $cabinLevel], 200);
     }
 
     /**
@@ -22,7 +21,9 @@ class CabinLevelController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $cabinLevel = CabinLevel::create($request->all());
+        return response()->json(['data'=>$cabinLevel],201);
     }
 
     /**
@@ -30,7 +31,7 @@ class CabinLevelController extends Controller
      */
     public function show(CabinLevel $cabinLevel)
     {
-        //
+        return response()->json(['data' => $cabinLevel], 200);
     }
 
     /**
@@ -38,7 +39,8 @@ class CabinLevelController extends Controller
      */
     public function update(Request $request, CabinLevel $cabinLevel)
     {
-        //
+        $cabinLevel->update($request->all());
+        return response()->json(['data' => $cabinLevel], 200);
     }
 
     /**
@@ -47,5 +49,8 @@ class CabinLevelController extends Controller
     public function destroy(CabinLevel $cabinLevel)
     {
         //
+        $cabinLevel->delete();
+         return response(null, 204);
+
     }
 }
