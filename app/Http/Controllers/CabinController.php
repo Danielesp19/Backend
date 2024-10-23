@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Cabin;
 use Illuminate\Http\Request;
-use App\Http\Requests\CabinStoreRequest;
-
 
 class CabinController extends Controller
 {
@@ -37,21 +35,13 @@ class CabinController extends Controller
      */
     public function store(CabinStoreRequest $request)
 {
-    try {
-        $cabin = Cabin::create($validatedData);
-
-
-        return response()->json(['data' => $cabin], 201);
     
-    } catch (\Exception $e) {
-        // Atrapar cualquier excepción y devolver un JSON con el error
-        return response()->json([
-            'error' => 'Error al crear la cabina',
-            'message' => $e->getMessage(), // Mensaje del error
-            'file' => $e->getFile(), // Archivo donde ocurrió
-            'line' => $e->getLine(), // Línea donde ocurrió
-        ], 500);
-    }
+       // Crear la cabina con los datos validados
+       $cabin = Cabin::create($validatedData);
+
+       // Retornar respuesta exitosa en JSON
+       return response()->json(['data' => $cabin], 201);
+        
 }
 
 
@@ -70,6 +60,7 @@ class CabinController extends Controller
     {
         $cabin->update($request->all());
         return response()->json(['data' => $cabin], 200);
+        
     }
 
     /**
