@@ -2,34 +2,45 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Cabin;
 use Illuminate\Http\Request;
+use App\Http\Requests\CabinStoreRequest;
+
 
 class CabinController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cabin = Cabin::orderBy('name', 'asc')->get();
+        $sort = $request->input('sort','name');
+        $type = $request->input('type','asc');
+        
+        $validSort = ["name","cabinlevel_id","capacity"];
+        $validType = ["desc","asc"];
+
+        if(! in_array($sort,$validSort)){
+            $message="invalid sort field: $sort";
+            return response()->json((['error'=>$message]),400);
+        }
+
+        if(! in_array($type,$validType)){
+            $message="invalid sort field: $type";
+            return response()->json((['error'=>$message]),400);
+        }
+
+        $cabin = Cabin::orderBy($sort, $type)->get();
         return response()->json(['data' => $cabin], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CabinStoreRequest $request)
 {
     try {
-        // Validar los datos que llegan
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:50',
-            'capacity' => 'required|integer|min:1',
-            'cabinlevel_id' => 'required|exists:cabin_levels,id',
-        ]);
-
-        // Crear la cabina con los datos validados
         $cabin = Cabin::create($validatedData);
 
-        // Retornar respuesta exitosa en JSON
+
         return response()->json(['data' => $cabin], 201);
     
     } catch (\Exception $e) {
