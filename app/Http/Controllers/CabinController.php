@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Cabin;
 use Illuminate\Http\Request;
+use App\Http\Resources\CabinResource;
+use App\Http\Resources\CabinCollection;
 
 class CabinController extends Controller
 {
     public function index()
     {
         $cabin = Cabin::orderBy('name', 'asc')->get();
-        return response()->json(['data' => $cabin], 200);
+        return response()->json([new CabinCollection($cabins)], 200);
+        //return response()->json(['data' => cabinResouce::collection($cabins)], 200);
     }
 
     /**
@@ -49,7 +52,7 @@ class CabinController extends Controller
      */
     public function show(Cabin $cabin)
     {
-        return response()->json(['data' => $cabin], 200);
+        return response()->json(['data' => new CabinResource($cabin)], 200);
     }
 
     /**
