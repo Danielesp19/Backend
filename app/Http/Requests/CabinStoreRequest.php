@@ -11,7 +11,7 @@ class CabinStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,9 +22,9 @@ class CabinStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|min:5|max:40|string|unique:cabins",
-            "cabinlevel_id" => "required|integer|numeric|exists:cabin_levels",
-            "capacity" => "required|integer|numeric|min:1",
-        ];
+        "name" => "required|string|min:3|max:40|unique:cabins",
+        "capacity" => "required|integer|min:1",
+        "cabinlevel_id" => "required|integer|exists:cabin_levels,id"
+    ];
     }
 }

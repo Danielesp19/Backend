@@ -4,53 +4,62 @@ namespace App\Http\Controllers;
 
 use App\Models\CabinService;
 use Illuminate\Http\Request;
+use App\Http\Resources\CabinServiceCollection;
+use App\Http\Resources\CabinServiceResource;
 
 class CabinServiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $cabinService = CabinService::orderBy('name', 'asc')->get();
-        return response()->json(['data' => $cabinService], 200);
+        $sort = $request->input('sort', 'cabin_id');
+        $type = $request->input('type', 'asc');
+
+        $validSort = ['cabin_id', 'service_id'];
+        $validType = ['desc', 'asc'];
+
+        if (!in_array($sort, $validSort)) {
+            return response()->json(['error' => "Invalid sort field: $sort"], 400);
+        }
+
+        if (!in_array($type, $validType)) {
+            return response()->json(['error' => "Invalid sort type: $type"], 400);
+        }
+
+        $cabinServices = CabinService::orderBy($sort, $type)->get();
+        return new CabinServiceCollection($cabinServices);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        
-        $cabinService = CabinService::create($request->all());
-        return response()->json(['data'=>$cabinService],201);
+        $validatedData = $request->validate([
+            'cabin_id' => 'required|exists:cabins,id',
+            'service_id' => 'required|exists:services,id',
+        ]);
+
+        $cabinService = CabinService::create($validatedData);
+        return new CabinServiceResource($cabinService);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(CabinService $cabinService)
     {
-        return response()->json(['data' => $cabinService], 200);
+        return new CabinServiceResource($cabinService);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, CabinService $cabinService)
     {
-        $cabinService->update($request->all());
-        return response()->json(['data' => $cabinService], 200);
+        $validatedData = $request->validate([
+            'cabin_id' => 'sometimes|required|exists:cabins,id',
+            'service_id' => 'sometimes|required|exists:services,id',
+        ]);
+
+        $cabinService->update($validatedData);
+        return (new CabinServiceResource($cabinService))->response()->setStatusCode(200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(CabinService $cabinService)
     {
-        //
         $cabinService->delete();
-         return response(null, 204);
-
+        return response(null, 204);
     }
 }
+

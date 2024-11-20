@@ -1,56 +1,67 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use App\Models\CabinLevel;
 use Illuminate\Http\Request;
 
+use App\Http\Resources\CabinLevelResource;
+use App\Http\Resources\CabinLevelCollection;
+
 class CabinLevelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $cabinLevel = CabinLevel::orderBy('name', 'asc')->get();
-        return response()->json(['data' => $cabinLevel], 200);
+        $sort = $request->input('sort', 'name');
+        $type = $request->input('type', 'asc');
+
+        $validSort = ['name', 'description'];
+        $validType = ['desc', 'asc'];
+
+        if (!in_array($sort, $validSort)) {
+            return response()->json(['error' => "Invalid sort field: $sort"], 400);
+        }
+
+        if (!in_array($type, $validType)) {
+            return response()->json(['error' => "Invalid sort type: $type"], 400);
+        }
+
+        $cabinLevels = CabinLevel::orderBy($sort, $type)->get();
+        return new CabinLevelCollection($cabinLevels);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        
-        $cabinLevel = CabinLevel::create($request->all());
-        return response()->json(['data'=>$cabinLevel],201);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+        ]);
+
+        $cabinLevel = CabinLevel::create($validatedData);
+        return new CabinLevelResource($cabinLevel);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(CabinLevel $cabinLevel)
     {
-        return response()->json(['data' => $cabinLevel], 200);
+        return new CabinLevelResource($cabinLevel);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, CabinLevel $cabinLevel)
     {
-        $cabinLevel->update($request->all());
-        return response()->json(['data' => $cabinLevel], 200);
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string|max:1000',
+        ]);
+
+        $cabinLevel->update($validatedData);
+        return (new CabinLevelResource($cabinLevel))->response()->setStatusCode(200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(CabinLevel $cabinLevel)
     {
-        //
         $cabinLevel->delete();
-         return response(null, 204);
-
+        return response(null, 204);
     }
 }
+

@@ -4,53 +4,65 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use App\Http\Resources\ReservationCollection;
+use App\Http\Resources\ReservationResource;
 
 class ReservationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $reservation = Reservation::orderBy('name', 'asc')->get();
-        return response()->json(['data' => $reservation], 200);
+        $sort = $request->input('sort', 'start_date');
+        $type = $request->input('type', 'asc');
+
+        $validSort = ['start_date', 'end_date', 'user_id', 'cabinservice_id'];
+        $validType = ['desc', 'asc'];
+
+        if (!in_array($sort, $validSort)) {
+            return response()->json(['error' => "Invalid sort field: $sort"], 400);
+        }
+
+        if (!in_array($type, $validType)) {
+            return response()->json(['error' => "Invalid sort type: $type"], 400);
+        }
+
+        $reservations = Reservation::orderBy($sort, $type)->get();
+        return new ReservationCollection($reservations);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        
-        $reservation = Reservation::create($request->all());
-        return response()->json(['data'=>$reservation],201);
+        $validatedData = $request->validate([
+            'cabinservice_id' => 'required|exists:cabinservice,id',
+            'user_id' => 'required|exists:users,id',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        $reservation = Reservation::create($validatedData);
+        return new ReservationResource($reservation);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Reservation $reservation)
     {
-        return response()->json(['data' => $reservation], 200);
+        return new ReservationResource($reservation);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Reservation $reservation)
     {
-        $reservation->update($request->all());
-        return response()->json(['data' => $reservation], 200);
+        $validatedData = $request->validate([
+            'cabinservice_id' => 'sometimes|required|exists:cabinservice,id',
+            'user_id' => 'sometimes|required|exists:users,id',
+            'start_date' => 'sometimes|required|date|after_or_equal:today',
+            'end_date' => 'sometimes|required|date|after:start_date',
+        ]);
+
+        $reservation->update($validatedData);
+        return (new ReservationResource($reservation))->response()->setStatusCode(200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Reservation $reservation)
     {
-        //
         $reservation->delete();
-         return response(null, 204);
-
+        return response(null, 204);
     }
 }

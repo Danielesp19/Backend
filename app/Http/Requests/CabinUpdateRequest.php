@@ -11,7 +11,7 @@ class CabinUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return True;
     }
 
     /**
@@ -22,7 +22,7 @@ class CabinUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            
         ];
     }
 }
