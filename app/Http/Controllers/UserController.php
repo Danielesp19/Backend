@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -35,28 +36,28 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:8',
-                'user_type' => 'required|string|in:admin,customer,employee',
-            ]);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'user_type' => 'required|in:admin,user', // Validación para que user_type sea admin o user
+        ]);
 
-            // Hashear la contraseña antes de guardar
-            $validatedData['password'] = bcrypt($validatedData['password']);
-
-            $user = User::create($validatedData);
-
-            return response()->json(['data' => $user], 201);
-        } catch (\Exception $e) {
+        if ($validator->fails()) {
             return response()->json([
-                'error' => 'Error al crear el usuario',
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ], 500);
+                'error' => 'Error de validación',
+                'message' => $validator->errors()
+            ], 422);
         }
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->user_type = $request->user_type;
+        $user->save();
+
+        return response()->json($user, 201);
     }
 
     public function show(User $user)
