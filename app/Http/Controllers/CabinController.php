@@ -62,13 +62,11 @@ class CabinController extends Controller
      */
     public function update(CabinUpdateRequest $request, Cabin $cabin)
 {
-    // Validar datos
+    
     $validatedData = $request->validated();
 
-    // Actualizar los datos de la cabaña específica
     $cabin->update($request->all());
 
-    // Retornar la cabaña actualizada
     return (new CabinResource($cabin))
         ->response()
         ->setStatusCode(200);
@@ -83,5 +81,26 @@ class CabinController extends Controller
         $cabin->delete();
          return response(null, 204);
 
+    }
+
+    public function index2(Request $request)
+    {
+        $sort = $request->input('sort', 'name');
+        $type = $request->input('type', 'asc');
+
+        $validSort = ["name", "cabinlevel_id", "capacity"];
+        $validType = ["desc", "asc"];
+
+        if (!in_array($sort, $validSort)) {
+            return response()->json(['error' => "Invalid sort field: $sort"], 400);
+        }
+
+        if (!in_array($type, $validType)) {
+            return response()->json(['error' => "Invalid sort type: $type"], 400);
+        }
+
+        $cabins = Cabin::orderBy($sort, $type)->get();
+
+        return new CabinCollection($cabins);
     }
 }

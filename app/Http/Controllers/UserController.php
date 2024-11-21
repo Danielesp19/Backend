@@ -10,37 +10,44 @@ use App\Http\Resources\UserResource;
 class UserController extends Controller
 {
     public function index(Request $request)
-    {
-        $sort = $request->input('sort', 'name');
-        $type = $request->input('type', 'asc');
+{
+    $sort = $request->input('sort', 'name');
+    $type = $request->input('type', 'asc');
 
-        $validSort = ['name', 'email', 'user_type'];
-        $validType = ['desc', 'asc'];
+    $validSort = ['name', 'email', 'user_type'];
+    $validType = ['desc', 'asc'];
 
-        if (!in_array($sort, $validSort)) {
-            return response()->json(['error' => "Invalid sort field: $sort"], 400);
-        }
-
-        if (!in_array($type, $validType)) {
-            return response()->json(['error' => "Invalid sort type: $type"], 400);
-        }
-
-        $users = User::orderBy($sort, $type)->get();
-        return new UserCollection($users);
+    if (!in_array($sort, $validSort)) {
+        return response()->json(['error' => "Invalid sort field: $sort"], 400);
     }
+
+    if (!in_array($type, $validType)) {
+        return response()->json(['error' => "Invalid sort type: $type"], 400);
+    }
+
+    // Filtra solo a los usuarios con `user_type = 'employee'`
+    $users = User::where('user_type', 'employee')
+                ->orderBy($sort, $type)
+                ->get();
+
+    return new UserCollection($users);
+}
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'user_type' => 'required|string|in:admin,customer',
-        ]);
-
-        $validatedData['password'] = bcrypt($validatedData['password']);
-        $user = User::create($validatedData);
-        return new UserResource($user);
+        try{
+            $user = User::create($request->all());
+            return response()->json(['data'=>$user],201);
+        }
+        catch (\Exception $e) {
+        // Atrapar cualquier excepción y devolver un JSON con el error
+        return response()->json([
+            'error' => 'Error al crear la cabina',
+            'message' => $e->getMessage(), // Mensaje del error
+            'file' => $e->getFile(), // Archivo donde ocurrió
+            'line' => $e->getLine(), // Línea donde ocurrió
+        ], 500);
+        }
     }
 
     public function show(User $user)

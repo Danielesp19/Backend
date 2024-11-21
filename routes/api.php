@@ -19,6 +19,7 @@ Route::prefix('cabins')->group(function () {
 
 Route::prefix('cabin-levels')->group(function () {
     Route::get('/', [CabinLevelController::class, 'index']);
+    Route::get('/or', [CabinLevelController::class, 'index2']);
     Route::post('/', [CabinLevelController::class, 'store']);
     Route::get('/{cabinLevel}', [CabinLevelController::class, 'show']);
     Route::put('/{cabinLevel}', [CabinLevelController::class, 'update']);

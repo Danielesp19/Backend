@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -18,9 +17,10 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'password' => $this->password,
             'user_type' => $this->user_type,
-            
+            'created_at' => $this->created_at->toDateTimeString(), // Formato de fecha de creación
+            'updated_at' => $this->updated_at->toDateTimeString(), // Formato de fecha de actualización
         ];
     }
 }
+
