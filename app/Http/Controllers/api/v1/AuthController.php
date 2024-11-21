@@ -21,9 +21,10 @@ class AuthController extends Controller
             ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'message' => $e->getMessage(),
-            ], $e->status);
-        }
+
+                'errors' => $e->errors(),
+            ], 422);
+        }        
 
         // Verificar que los datos provistos sean los correctos y que
         // efectivamente el usuario se autentique con ellos utilizando

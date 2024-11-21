@@ -39,8 +39,8 @@ class CabinController extends Controller
     public function store(CabinStoreRequest $request)
 {
     
-       $validatedData = $request->validated();
-
+        $validatedData = $request->validated();
+        $validatedData['busy'] = false;
        
         $cabin = Cabin::create($validatedData);
 

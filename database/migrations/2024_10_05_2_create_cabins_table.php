@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', length: 50);
             $table->integer('capacity')->unsigned();
+            $table->boolean('busy')->default(false);;
             $table->foreignId('cabinlevel_id');
             $table->timestamps();
 

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -35,19 +36,28 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        try{
-            $user = User::create($request->all());
-            return response()->json(['data'=>$user],201);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'user_type' => 'required|in:admin,user', // Validación para que user_type sea admin o user
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => 'Error de validación',
+                'message' => $validator->errors()
+            ], 422);
         }
-        catch (\Exception $e) {
-        // Atrapar cualquier excepción y devolver un JSON con el error
-        return response()->json([
-            'error' => 'Error al crear la cabina',
-            'message' => $e->getMessage(), // Mensaje del error
-            'file' => $e->getFile(), // Archivo donde ocurrió
-            'line' => $e->getLine(), // Línea donde ocurrió
-        ], 500);
-        }
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->user_type = $request->user_type;
+        $user->save();
+
+        return response()->json($user, 201);
     }
 
     public function show(User $user)

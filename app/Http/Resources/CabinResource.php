@@ -18,6 +18,7 @@ class CabinResource extends JsonResource
             "name"=> $this->name,
             "cabinlevel_id"=> $this->cabinlevel_id,
             "capacidad"=> $this->capacity,
+            "busy"=> $this->busy,
 
         ];
 

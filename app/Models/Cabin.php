@@ -9,7 +9,7 @@ class Cabin extends Model
 {
     use HasFactory;
     protected $table= 'cabins';
-    protected $fillable = ['name', 'capacity', 'cabinlevel_id'];
+    protected $fillable = ['name', 'capacity', 'busy' , 'cabinlevel_id'];
 
     
 }
