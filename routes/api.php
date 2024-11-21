@@ -9,6 +9,20 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 
+Route::post('/v1/login',             
+            [App\Http\Controllers\api\v1\AuthController::class,             
+            'login'])->name('api.login');
+
+Route::middleware(['auth:sanctum'])->group(function() {     
+    Route::post('/v1/logout',                 
+                [App\Http\Controllers\api\v1\AuthController::class,                  
+                'logout'])->name('api.logout'); 
+});
+
+Route::middleware(['auth:sanctum'])->group(function() {
+         // Poner aquí las rutas que requieren autenticación previa 
+});
+
 Route::prefix('cabins')->group(function () {
     Route::get('/', [CabinController::class, 'index']);
     Route::post('/', [CabinController::class, 'store']);

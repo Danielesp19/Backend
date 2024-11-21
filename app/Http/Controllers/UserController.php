@@ -35,18 +35,27 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        try{
-            $user = User::create($request->all());
-            return response()->json(['data'=>$user],201);
-        }
-        catch (\Exception $e) {
-        // Atrapar cualquier excepción y devolver un JSON con el error
-        return response()->json([
-            'error' => 'Error al crear la cabina',
-            'message' => $e->getMessage(), // Mensaje del error
-            'file' => $e->getFile(), // Archivo donde ocurrió
-            'line' => $e->getLine(), // Línea donde ocurrió
-        ], 500);
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8',
+                'user_type' => 'required|string|in:admin,customer,employee',
+            ]);
+
+            // Hashear la contraseña antes de guardar
+            $validatedData['password'] = bcrypt($validatedData['password']);
+
+            $user = User::create($validatedData);
+
+            return response()->json(['data' => $user], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al crear el usuario',
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ], 500);
         }
     }
 
