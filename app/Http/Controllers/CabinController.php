@@ -61,16 +61,16 @@ class CabinController extends Controller
      * Update the specified resource in storage.
      */
     public function update(CabinUpdateRequest $request, Cabin $cabin)
-{
+    {
     
-    $validatedData = $request->validated();
+        $validatedData = $request->validated();
 
-    $cabin->update($request->all());
+        $cabin->update($request->all());
 
-    return (new CabinResource($cabin))
-        ->response()
-        ->setStatusCode(200);
-}
+        return (new CabinResource($cabin))
+            ->response()
+            ->setStatusCode(200);
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -83,24 +83,30 @@ class CabinController extends Controller
 
     }
 
-    public function index2(Request $request)
+
+    public function avalible()
     {
-        $sort = $request->input('sort', 'name');
-        $type = $request->input('type', 'asc');
+        $availableCabins = Cabin::where('busy', false)->get();
 
-        $validSort = ["name", "cabinlevel_id", "capacity"];
-        $validType = ["desc", "asc"];
+        return new CabinCollection($availableCabins);
+    }
 
-        if (!in_array($sort, $validSort)) {
-            return response()->json(['error' => "Invalid sort field: $sort"], 400);
-        }
+    public function reserved()
+    {
+        $availableCabins = Cabin::where('busy', true)->get();
 
-        if (!in_array($type, $validType)) {
-            return response()->json(['error' => "Invalid sort type: $type"], 400);
-        }
+        return new CabinCollection($availableCabins);
+    }
 
-        $cabins = Cabin::orderBy($sort, $type)->get();
+    public function release(CabinUpdateRequest $request, Cabin $cabin)
+    {
+    
+        $validatedData = $request->validated();
 
-        return new CabinCollection($cabins);
+        $cabin->update($request->all());
+
+        return (new CabinResource($cabin))
+            ->response()
+            ->setStatusCode(200);
     }
 }

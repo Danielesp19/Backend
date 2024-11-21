@@ -26,8 +26,7 @@ class UserController extends Controller
         return response()->json(['error' => "Invalid sort type: $type"], 400);
     }
 
-    // Filtra solo a los usuarios con `user_type = 'employee'`
-    $users = User::where('user_type', 'employee')
+    $users = User::where('user_type', 'user')
                 ->orderBy($sort, $type)
                 ->get();
 

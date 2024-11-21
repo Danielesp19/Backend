@@ -32,11 +32,11 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'cabinservice_id' => 'required|exists:cabinservice,id',
-            'user_id' => 'required|exists:users,id',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-        ]);
+        'cabinservice_id' => 'required',
+        'user_id' => 'required',
+        'start_date' => 'required|date|after_or_equal:today', // Validación de fecha de inicio
+        'end_date' => 'required|date|after:start_date', // Validación de fecha de fin (debe ser después de la fecha de inicio)
+    ]);
 
         $reservation = Reservation::create($validatedData);
         return new ReservationResource($reservation);

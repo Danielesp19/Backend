@@ -8,72 +8,78 @@ use App\Http\Controllers\CabinServiceController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Models\Reservation;
 
 // Rutas públicas
 Route::prefix('cabins')->group(function () {
-    // Listar cabañas disponibles (todos)
-    Route::get('/', [CabinController::class, 'index']); 
-    
-    // Filtrar cabañas por nivel, nombre, o aforo (por defecto aforo ascendente)
-    Route::get('/filter', [CabinController::class, 'filter']); 
-    
+    // Listar cabañas disponibles
+    Route::get('/avalible', [CabinController::class, 'avalible']);
+    // Filtrar cabañas por nivel, nombre, o aforo
+    Route::get('/filter', [CabinController::class, 'index']);
     // Incluir cabañas con ciertos servicios
-    Route::get('/filter-by-services', [CabinController::class, 'filterByServices']); 
-    
-    // Reservar cabaña (todos)
-    Route::post('/reservations', [ReservationController::class, 'store']); 
+    Route::get('/filter-by-services', [CabinController::class, 'filterByServices']);
+    // Reservar cabaña (todos los usuarios)
+    Route::post('/reservations', [ReservationController::class, 'store']);
 });
 
-// Rutas de autenticación
-Route::post('/v1/login', [App\Http\Controllers\api\v1\AuthController::class, 'login'])->name('api.login');
 
-// Rutas protegidas por autenticación (requieren token)
-Route::middleware(['auth:sanctum'])->group(function() {
-    Route::post('/v1/logout', [App\Http\Controllers\api\v1\AuthController::class, 'logout'])->name('api.logout');
-        
-        Route::prefix('cabins')->group(function () {
-            Route::post('/', [CabinController::class, 'store']);  // Crear cabaña
-            Route::put('/{cabin}', [CabinController::class, 'update']); // Actualizar cabaña
-            Route::delete('/{cabin}', [CabinController::class, 'destroy']); // Eliminar cabaña
-            Route::get('/reserved', [CabinController::class, 'reserved']); // Listar cabañas reservadas
-        });
+Route::post('/v1/login', [App\Http\Controllers\Api\V1\AuthController::class, 'login'])->name('api.login');
+Route::middleware(['auth:sanctum'])->post('/v1/logout', [App\Http\Controllers\Api\V1\AuthController::class, 'logout'])->name('api.logout');
 
-        // Gestión de niveles de cabañas (administradores)
-        Route::prefix('cabin-levels')->group(function () {
-            Route::post('/', [CabinLevelController::class, 'store']); // Crear nivel de cabaña
-            Route::put('/{cabinLevel}', [CabinLevelController::class, 'update']); // Actualizar nivel de cabaña
-            Route::delete('/{cabinLevel}', [CabinLevelController::class, 'destroy']); // Eliminar nivel de cabaña
-        });
 
-        // Gestión de servicios (administradores)
-        Route::prefix('services')->group(function () {
-            Route::post('/', [ServiceController::class, 'store']);  // Crear servicio
-            Route::put('/{service}', [ServiceController::class, 'update']); // Actualizar servicio
-            Route::delete('/{service}', [ServiceController::class, 'destroy']); // Eliminar servicio
-        });
-
-        // Gestión de servicios en cabañas (administradores)
-        Route::prefix('cabin-services')->group(function () {
-            Route::post('/', [CabinServiceController::class, 'store']);  // Asignar servicio a cabaña
-            Route::put('/{cabinService}', [CabinServiceController::class, 'update']); // Actualizar servicio en cabaña
-            Route::delete('/{cabinService}', [CabinServiceController::class, 'destroy']); // Eliminar servicio en cabaña
-        });
-
-        // Liberar cabaña (administradores)
-        Route::put('/reservations/{reservation}/release', [ReservationController::class, 'release']); // Liberar cabaña
+Route::middleware(['auth:sanctum', EnsureUserIsAdmin::class])->group(function () {
+    // cabañas
+    Route::prefix('cabins')->group(function () {
+        Route::post('/', [CabinController::class, 'store']); // Crear cabaña
+        Route::put('/{cabin}', [CabinController::class, 'update']); // Actualizar cabaña
+        Route::delete('/{cabin}', [CabinController::class, 'destroy']); // Eliminar cabaña
+        Route::get('/reserved', [CabinController::class, 'reserved']); // Listar cabañas reservadas -----
+        Route::put('/release/{cabin}', [CabinController::class, 'release']); // Liberar cabaña  -----
     });
 
-    // Gestión de usuarios (administradores)
-    Route::middleware(['user_type:admin'])->group(function () {
-        Route::prefix('users')->group(function () {
-            Route::get('/', [UserController::class, 'index']);  // Listar usuarios
-            Route::get('/{user}', [UserController::class, 'show']); // Ver usuario
-            Route::put('/{user}', [UserController::class, 'update']); // Actualizar usuario
-            Route::delete('/{user}', [UserController::class, 'destroy']); // Eliminar usuario
-        });
+    //  niveles de cabañas
+    Route::prefix('cabin-levels')->group(function () {
+        Route::post('/', [CabinLevelController::class, 'store']); // Crear nivel
+        Route::get('/', [CabinLevelController::class, 'index']); // Crear nivel
+        Route::get('/{cabinLevel}', [CabinLevelController::class, 'show']); // Crear nivel
+        Route::put('/{cabinLevel}', [CabinLevelController::class, 'update']); // Actualizar nivel
+        Route::delete('/{cabinLevel}', [CabinLevelController::class, 'destroy']); // Eliminar nivel
+    });
+
+    //  servicios
+    Route::prefix('services')->group(function () {
+        Route::post('/', [ServiceController::class, 'store']); // Crear servicio
+        Route::get('/', [ServiceController::class, 'index']); // Crear servicio
+        Route::put('/{service}', [ServiceController::class, 'update']); // Actualizar servicio
+        Route::delete('/{service}', [ServiceController::class, 'destroy']); // Eliminar servicio
+    });
+
+    //  usuarios
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index']); // Listar usuarios
+        Route::get('/{user}', [UserController::class, 'show']); // Ver detalle de usuario
+        Route::put('/{user}', [UserController::class, 'update']); // Actualizar usuario
+        Route::delete('/{user}', [UserController::class, 'destroy']); // Eliminar usuario
+    });
+
+    //  servicios en cabañas
+    Route::prefix('cabin-services')->group(function () {
+        Route::post('/', [CabinServiceController::class, 'store']); // Asignar servicio a cabaña
+        Route::get('/', [CabinServiceController::class, 'index']); // Asignar servicio a cabaña
+        Route::put('/{cabinService}', [CabinServiceController::class, 'update']); // Actualizar servicio en cabaña
+        Route::delete('/{cabinService}', [CabinServiceController::class, 'destroy']); // Eliminar servicio en cabaña
+    });
+
+    //  usuarios
+    Route::prefix('reservations')->group(function () {
+        Route::get('/', [ReservationController::class, 'index']); // Listar usuarios
+        Route::put('/{user}', [UserController::class, 'update']); // Actualizar usuario
+        Route::delete('/{user}', [UserController::class, 'destroy']); // Eliminar usuario
+    });
 });
 
-// Rutas públicas para crear usuarios (sin token)
+// Rutas públicas para creación de usuarios
 Route::prefix('users')->group(function () {
-    Route::post('/', [UserController::class, 'store']); // Crear usuario (no requiere token)
+    Route::post('/', [UserController::class, 'store']); // Crear usuario
 });

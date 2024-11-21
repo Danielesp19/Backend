@@ -22,8 +22,7 @@ return new class extends Migration
             $table->foreign('cabinlevel_id')->references('id')->on('cabin_levels')
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
-        });
-    }
+        });}
 
     /**
      * Reverse the migrations.
