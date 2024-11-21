@@ -26,7 +26,6 @@ return new class extends Migration
                 ->onDelete('restrict');
         });
     }
-    
 
     /**
      * Reverse the migrations.

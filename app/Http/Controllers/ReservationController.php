@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Reservation;
-use Illuminate\Http\Request;
 use App\Http\Resources\ReservationCollection;
 use App\Http\Resources\ReservationResource;
+use App\Models\Reservation;
+use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
@@ -17,15 +17,16 @@ class ReservationController extends Controller
         $validSort = ['start_date', 'end_date', 'user_id', 'cabinservice_id'];
         $validType = ['desc', 'asc'];
 
-        if (!in_array($sort, $validSort)) {
+        if (! in_array($sort, $validSort)) {
             return response()->json(['error' => "Invalid sort field: $sort"], 400);
         }
 
-        if (!in_array($type, $validType)) {
+        if (! in_array($type, $validType)) {
             return response()->json(['error' => "Invalid sort type: $type"], 400);
         }
 
         $reservations = Reservation::orderBy($sort, $type)->get();
+
         return new ReservationCollection($reservations);
     }
 
@@ -39,6 +40,7 @@ class ReservationController extends Controller
         ]);
 
         $reservation = Reservation::create($validatedData);
+
         return new ReservationResource($reservation);
     }
 
@@ -57,12 +59,14 @@ class ReservationController extends Controller
         ]);
 
         $reservation->update($validatedData);
+
         return (new ReservationResource($reservation))->response()->setStatusCode(200);
     }
 
     public function destroy(Reservation $reservation)
     {
         $reservation->delete();
+
         return response(null, 204);
     }
 }

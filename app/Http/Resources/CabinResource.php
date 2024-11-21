@@ -15,10 +15,10 @@ class CabinResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "name"=> $this->name,
-            "cabinlevel_id"=> $this->cabinlevel_id,
-            "capacidad"=> $this->capacity,
-            "busy"=> $this->busy,
+            'name' => $this->name,
+            'cabinlevel_id' => $this->cabinlevel_id,
+            'capacidad' => $this->capacity,
+            'busy' => $this->busy,
 
         ];
 

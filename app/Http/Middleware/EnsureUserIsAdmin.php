@@ -14,9 +14,8 @@ class EnsureUserIsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->user() && $request->user()->user_type === 'admin') {
-        return $next($request);
-}
-
+            return $next($request);
+        }
 
         return response()->json([
             'error' => 'Unauthorized',
@@ -24,4 +23,3 @@ class EnsureUserIsAdmin
         ], 403);
     }
 }
-

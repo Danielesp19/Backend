@@ -9,10 +9,10 @@ class CabinService extends Model
 {
     use HasFactory;
 
-     protected $table= 'cabinservice';
+    protected $table = 'cabinservice';
 
-    protected $fillable =[
+    protected $fillable = [
         'cabin_id',
-        'service_id'
+        'service_id',
     ];
 }

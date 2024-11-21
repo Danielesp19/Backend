@@ -2,36 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function index(Request $request)
-{
-    $sort = $request->input('sort', 'name');
-    $type = $request->input('type', 'asc');
+    {
+        $sort = $request->input('sort', 'name');
+        $type = $request->input('type', 'asc');
 
-    $validSort = ['name', 'email', 'user_type'];
-    $validType = ['desc', 'asc'];
+        $validSort = ['name', 'email', 'user_type'];
+        $validType = ['desc', 'asc'];
 
-    if (!in_array($sort, $validSort)) {
-        return response()->json(['error' => "Invalid sort field: $sort"], 400);
+        if (! in_array($sort, $validSort)) {
+            return response()->json(['error' => "Invalid sort field: $sort"], 400);
+        }
+
+        if (! in_array($type, $validType)) {
+            return response()->json(['error' => "Invalid sort type: $type"], 400);
+        }
+
+        $users = User::where('user_type', 'user')
+            ->orderBy($sort, $type)
+            ->get();
+
+        return new UserCollection($users);
     }
-
-    if (!in_array($type, $validType)) {
-        return response()->json(['error' => "Invalid sort type: $type"], 400);
-    }
-
-    $users = User::where('user_type', 'user')
-                ->orderBy($sort, $type)
-                ->get();
-
-    return new UserCollection($users);
-}
 
     public function store(Request $request)
     {
@@ -45,11 +45,11 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'error' => 'Error de validación',
-                'message' => $validator->errors()
+                'message' => $validator->errors(),
             ], 422);
         }
 
-        $user = new User();
+        $user = new User;
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
@@ -68,7 +68,7 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'email' => 'sometimes|required|email|unique:users,email,'.$user->id,
             'password' => 'sometimes|required|string|min:8',
             'user_type' => 'sometimes|required|string|in:admin,customer',
         ]);
@@ -78,15 +78,14 @@ class UserController extends Controller
         }
 
         $user->update($validatedData);
+
         return (new UserResource($user))->response()->setStatusCode(200);
     }
 
     public function destroy(User $user)
     {
         $user->delete();
+
         return response(null, 204);
     }
-
-    
 }
-

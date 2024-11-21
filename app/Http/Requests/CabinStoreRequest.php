@@ -22,9 +22,9 @@ class CabinStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-        "name" => "required|string|min:3|max:40|unique:cabins",
-        "capacity" => "required|integer|min:1",
-        "cabinlevel_id" => "required|integer|exists:cabin_levels,id"
-    ];
+            'name' => 'required|string|min:3|max:40|unique:cabins',
+            'capacity' => 'required|integer|min:1',
+            'cabinlevel_id' => 'required|integer|exists:cabin_levels,id',
+        ];
     }
 }

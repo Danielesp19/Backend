@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class CabinLevel extends Model
 {
     use HasFactory;
-    protected $table= 'cabin_levels';
 
-    protected $fillable =[
+    protected $table = 'cabin_levels';
+
+    protected $fillable = [
         'name',
-        'description'
+        'description',
     ];
 }

@@ -21,4 +21,3 @@ class CabinLevelResource extends JsonResource
         ];
     }
 }
-

@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name', length: 50);
             $table->integer('capacity')->unsigned();
-            $table->boolean('busy')->default(false);;
+            $table->boolean('busy')->default(false);
             $table->foreignId('cabinlevel_id');
             $table->timestamps();
 
             $table->foreign('cabinlevel_id')->references('id')->on('cabin_levels')
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
-        });}
+        });
+    }
 
     /**
      * Reverse the migrations.

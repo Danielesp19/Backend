@@ -21,4 +21,3 @@ class CabinServiceResource extends JsonResource
         ];
     }
 }
-

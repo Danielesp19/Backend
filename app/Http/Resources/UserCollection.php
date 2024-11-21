@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
 {
-     /**
+    /**
      * Transform the resource collection into an array.
      *
      * @return array<int|string, mixed>
@@ -17,7 +17,7 @@ class UserCollection extends ResourceCollection
         return [
             'data' => $this->collection,
             'links' => [
-            'self' => 'link-value',
+                'self' => 'link-value',
             ],
         ];
     }

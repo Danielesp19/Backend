@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cabinservice_id');
             $table->foreignId('user_id');
-            $table->date('start_date'); 
+            $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();
 

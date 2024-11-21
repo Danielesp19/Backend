@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CabinController;
 use App\Http\Controllers\CabinLevelController;
 use App\Http\Controllers\CabinServiceController;
@@ -9,7 +7,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Models\Reservation;
+use Illuminate\Support\Facades\Route;
 
 // Rutas públicas
 Route::prefix('cabins')->group(function () {
@@ -23,10 +21,8 @@ Route::prefix('cabins')->group(function () {
     Route::post('/reservations', [ReservationController::class, 'store']);
 });
 
-
 Route::post('/v1/login', [App\Http\Controllers\Api\V1\AuthController::class, 'login'])->name('api.login');
 Route::middleware(['auth:sanctum'])->post('/v1/logout', [App\Http\Controllers\Api\V1\AuthController::class, 'logout'])->name('api.logout');
-
 
 Route::middleware(['auth:sanctum', EnsureUserIsAdmin::class])->group(function () {
     // cabañas

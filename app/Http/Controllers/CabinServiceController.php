@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CabinService;
-use Illuminate\Http\Request;
 use App\Http\Resources\CabinServiceCollection;
 use App\Http\Resources\CabinServiceResource;
+use App\Models\CabinService;
+use Illuminate\Http\Request;
 
 class CabinServiceController extends Controller
 {
@@ -17,15 +17,16 @@ class CabinServiceController extends Controller
         $validSort = ['cabin_id', 'service_id'];
         $validType = ['desc', 'asc'];
 
-        if (!in_array($sort, $validSort)) {
+        if (! in_array($sort, $validSort)) {
             return response()->json(['error' => "Invalid sort field: $sort"], 400);
         }
 
-        if (!in_array($type, $validType)) {
+        if (! in_array($type, $validType)) {
             return response()->json(['error' => "Invalid sort type: $type"], 400);
         }
 
         $cabinServices = CabinService::orderBy($sort, $type)->get();
+
         return new CabinServiceCollection($cabinServices);
     }
 
@@ -37,6 +38,7 @@ class CabinServiceController extends Controller
         ]);
 
         $cabinService = CabinService::create($validatedData);
+
         return new CabinServiceResource($cabinService);
     }
 
@@ -53,13 +55,14 @@ class CabinServiceController extends Controller
         ]);
 
         $cabinService->update($validatedData);
+
         return (new CabinServiceResource($cabinService))->response()->setStatusCode(200);
     }
 
     public function destroy(CabinService $cabinService)
     {
         $cabinService->delete();
+
         return response(null, 204);
     }
 }
-
