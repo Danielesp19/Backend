@@ -40,7 +40,7 @@ class CabinController extends Controller
 {
     
        $validatedData = $request->validated();
-
+       $validatedData['busy'] = false;
        
         $cabin = Cabin::create($validatedData);
 
