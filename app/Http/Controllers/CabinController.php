@@ -98,12 +98,10 @@ class CabinController extends Controller
         return new CabinCollection($availableCabins);
     }
 
-    public function release(CabinUpdateRequest $request, Cabin $cabin)
+    public function release(Request $request, Cabin $cabin)
     {
-    
-        $validatedData = $request->validated();
-
-        $cabin->update($request->all());
+        
+        $cabin->update(['busy' => false]);
 
         return (new CabinResource($cabin))
             ->response()

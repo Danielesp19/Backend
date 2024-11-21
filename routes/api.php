@@ -35,7 +35,7 @@ Route::middleware(['auth:sanctum', EnsureUserIsAdmin::class])->group(function ()
         Route::put('/{cabin}', [CabinController::class, 'update']); // Actualizar cabaña
         Route::delete('/{cabin}', [CabinController::class, 'destroy']); // Eliminar cabaña
         Route::get('/reserved', [CabinController::class, 'reserved']); // Listar cabañas reservadas -----
-        Route::put('/release/{cabin}', [CabinController::class, 'release']); // Liberar cabaña  -----
+        Route::patch('/release/{cabin}', [CabinController::class, 'release']); // Liberar cabaña  -----
     });
 
     //  niveles de cabañas
